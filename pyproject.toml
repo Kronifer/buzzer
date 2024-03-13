@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "buzzer"
+version = "0.1.0"
+description = "N/A"
+authors = ["None"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Flask = "^2.3.3"
+flask-socketio = "^5.3.6"
+gunicorn = "^21.2.0"
+flask-cors = "^4.0.0"
+eventlet = "^0.33.3"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.9.1"
+isort = "^5.12.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

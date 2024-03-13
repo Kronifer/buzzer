@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center" id="game">
+	<h1>Join Game</h1>
+	<br>
+	<h3 id="uname"></h3>
+	<div id="connect">
+		<h4 id="err" style="color:red"></h4>
+		<input id="roomcode" type="text" placeholder="Room Code" class="form-control center-input w-50"><br>
+		<input id="username" type="text" placeholder="Name" class="form-control center-input w-50"><br>
+		<input id="submitcode" type="button" onclick="submit()" value="Connect" class="btn btn-secondary center-input">
+	</div>
+</div>
+<script>
+    var socket = io();
+	var uname = "";
+	var code = "";
+	socket.on("disconnect", (data) => {
+		location.reload();
+	})
+	socket.on("ubuzz_enable", (data) => {
+		document.getElementById("buzzer").disabled = false;
+	})
+	socket.on("user_ok", (data) => {
+		console.log(data);
+		if(data != "OK") {
+			if(data === "NO_CODE") {
+				document.getElementById("err").innerText = "Invalid Code";
+				return;
+			}
+			else {
+				document.getElementById("err").innerText = "Username Taken";
+				return;
+			}
+		}
+		document.getElementById("connect").remove();
+		var b = document.createElement("input");
+		b.type = "button";
+		b.id = "buzzer";
+		b.value = "Buzz";
+		b.className = "btn btn-primary center-input";
+		b.style = "width:250px;height:250px;cursor:pointer;font-size:2rem;"
+		b.onclick = buzz;
+		document.getElementById("uname").innerText="Username: " + uname;
+		document.getElementById("game").appendChild(document.createElement("br"))
+		document.getElementById("game").appendChild(b);
+	});
+    function submit() {
+        var unameField = document.getElementById("username");
+		uname = unameField.value;
+        var roomcodeField = document.getElementById("roomcode");
+		code = roomcodeField.value;
+		var btn = document.getElementById("submitcode");
+		socket.emit("user_connect", roomcodeField.value + "," + unameField.value);
+	};
+
+	function buzz() {
+		socket.emit("user_buzz", code+","+uname);
+		document.getElementById("buzzer").disabled = true;
+	}
+</script>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="game" class="text-center">
+	<h1>Host Game</h1>
+	<br>
+	<h3 id="gamecode"></h3>
+    <br>
+    <div id="button" class="text-center">
+        <input type="button" id="clearbuzz" class="btn btn-primary center-input" value="Clear Buzzers" onclick="clearbuzzers()">
+    </div>
+    <br>
+    <h3 id="ubuzzed"></h3>
+    <ul id="ubuzzed-list" style="margin-top:20px;"></ul>
+    <br>
+    <h3 id="u"></h3>
+    <ul id="u-list" style="margin-top:20px;"></ul>
+</div>
+<script>
+    function clearbuzzers() {
+        buzzedList.textContent = "";
+	firstBuzz = true;
+        socket.emit("adm_clearbuzz", code);
+    }
+
+    function sortByScore(a, b) {
+	return b.score - a.score;
+    }
+
+    function sortScores() {
+        var elems = Array.from(document.getElementById("u-list").childNodes);
+	elems.sort(sortByScore);
+	document.getElementById("u-list").innerHTML = '';
+	elems.forEach((i) => {
+	    document.getElementById("u-list").appendChild(i);
+	});
+    }
+
+    const decoder = new TextDecoder("utf-8");
+    var codeUI = document.getElementById("gamecode");
+    var code = "";
+    var socket = io();
+    window.addEventListener("keydown", (e) => {
+        if(e.key == " ") {
+	    clearbuzzers();
+	}
+    }, false);
+    var firstBuzz = true;
+    fetch("/buzzer/api/newgame", {method: "POST"}).then((resp) => {resp.body.getReader().read().then(({done, value}) => {code = decoder.decode(value); codeUI.innerText = "Room Code: " + decoder.decode(value);})});
+    document.getElementById("ubuzzed").innerText = "Buzzed Users:";
+    document.getElementById("u").innerText = "Users:";
+    var ulist = document.getElementById("u-list");
+    var buzzedList = document.getElementById("ubuzzed-list");
+    socket.on("connect", () => {
+	    socket.emit("adm", code);
+    });
+    socket.on("adm_ok", (data) => {
+        if(data === "NO_USR") {
+            location.reload();
+        }
+        console.log(data);
+    });
+    socket.on("new_user", (data) => {
+        var e = document.createElement("li");
+	e.score = 0;
+	var a = document.createElement("input");
+	var s = document.createElement("input");
+	var spacing = document.createElement("span");
+	spacing.innerText = " ";
+	a.type = "button";
+	s.type = "button";
+	a.className = "btn btn-sm btn-secondary center-input";
+	s.className = "btn btn-sm btn-secondary center-input";
+	s.value = "-";
+	a.value = "+";
+	a.addEventListener('click', () => {
+	    var elem = document.getElementById(data).innerText.split(": ");
+	    var score = parseInt(elem[1]) + 1;
+	    document.getElementById(data).score += 1;
+	    document.getElementById(data).innerText = data + ": " + score + " ";
+	    document.getElementById(data).appendChild(s);
+	    document.getElementById(data).appendChild(spacing);
+	    document.getElementById(data).appendChild(a);
+	    sortScores();
+	});
+	s.addEventListener('click', () => {
+            var elem = document.getElementById(data).innerText.split(": ");
+            var score = parseInt(elem[1]) - 1;
+	    document.getElementById(data).score -= 1;
+            document.getElementById(data).innerText = data + ": " + score + " ";
+	    document.getElementById(data).appendChild(s);
+	    document.getElementById(data).appendChild(spacing);
+            document.getElementById(data).appendChild(a);
+	    sortScores();
+        });
+        e.className = "coding-list";
+        e.innerText = data + ": 0 ";
+        e.id = data;
+	e.appendChild(s);
+	e.appendChild(spacing);
+	e.appendChild(a);
+        ulist.appendChild(e);
+    });
+
+    socket.on("adm_deluser", (data) => {
+        console.log(data + " removed");
+        document.getElementById(data).remove();
+    })
+
+    socket.on("adm_buzz", (data) => {
+	console.log(data + " buzzed");
+	if(buzzedList.innerText.split("\n").includes(data)) {
+	    return;
+	}
+        new Audio("./audio/buzz.mp3").play();
+        var e = document.createElement("li");
+        if(firstBuzz) {
+	    e.style = "color:#00FF00;font-size:36px;font-style:italic;";
+	    firstBuzz = false;
+	}
+        e.className = "coding-list";
+        e.innerText = data;
+        buzzedList.appendChild(e);
+    })
+</script>
+{% endblock %}
