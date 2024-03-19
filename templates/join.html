@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="text-center" id="game">
-	<h1>Join Game</h1>
+	<h1 id="game-header">Join Game</h1>
 	<br>
 	<h3 id="uname"></h3>
 	<div id="connect">
@@ -19,6 +19,19 @@
 	socket.on("disconnect", (data) => {
 		location.reload();
 	})
+
+	socket.on("user_scoreup", (data) => {
+		var score = parseInt(document.getElementById("score").innerText.split(": ")[1]);
+		score += 1;
+		document.getElementById("score").innerText = "Score: " + score;
+	})
+
+	socket.on("user_scoredown", (data) => {
+		var score = parseInt(document.getElementById("score").innerText.split(": ")[1]);
+		score -= 1;
+		document.getElementById("score").innerText = "Score: " + score;
+	})
+
 	socket.on("ubuzz_enable", (data) => {
 		document.getElementById("buzzer").disabled = false;
 	})
@@ -35,6 +48,12 @@
 			}
 		}
 		document.getElementById("connect").remove();
+		var scoreContainer = document.createElement("h4");
+		scoreContainer.id = "score";
+		scoreContainer.innerText = "Score: 0";
+		document.getElementById("game").appendChild(document.createElement("br"));
+		document.getElementById("game").appendChild(scoreContainer);
+		document.getElementByI
 		var b = document.createElement("input");
 		b.type = "button";
 		b.id = "buzzer";

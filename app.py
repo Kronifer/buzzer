@@ -49,6 +49,29 @@ def handle_new_game(code):
     adm[request.sid] = code
 
 
+@sock.on("adm_scoreup")
+def handle_scoreup(code):
+    code = code.split(",")
+    if adm.get(request.sid, None) != code[0]:
+        emit("adm_ok", "NO_AUTH")
+        return
+    for i in games[code[0]]:
+        if code[1] == i[1]:
+            emit("user_scoreup", to=i[0])
+            return
+
+@sock.on("adm_scoredown")
+def handle_scoredown(code):
+    code = code.split(",")
+    if adm.get(request.sid, None) != code[0]:
+        emit("adm_ok", "NO_AUTH")
+        return
+    for i in games[code[0]]:
+        if code[1] == i[1]:
+            emit("user_scoredown", to=i[0])
+            return
+
+
 @sock.on("user_connect")
 def handle_new_user(code):
     code = code.split(",")

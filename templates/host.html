@@ -82,6 +82,7 @@
 	    document.getElementById(data).appendChild(spacing);
 	    document.getElementById(data).appendChild(a);
 	    sortScores();
+	    socket.emit("adm_scoreup", code+","+data);
 	});
 	s.addEventListener('click', () => {
             var elem = document.getElementById(data).innerText.split(": ");
@@ -92,6 +93,7 @@
 	    document.getElementById(data).appendChild(spacing);
             document.getElementById(data).appendChild(a);
 	    sortScores();
+	    socket.emit("adm_scoredown", code+","+data);
         });
         e.className = "coding-list";
         e.innerText = data + ": 0 ";
