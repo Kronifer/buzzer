@@ -10,6 +10,20 @@
         <input type="button" id="clearbuzz" class="btn btn-primary center-input" value="Clear Buzzers" onclick="clearbuzzers()">
     </div>
     <br>
+    <table style="width: 100%; table-layout: fixed;">
+        <tr>
+		<th><h3 id="team1">Team 1: 0</h3>
+		<input id="team1M" type="button" class="btn btn-secondary center-input" value="-" style="margin-right: 1rem;">
+		<input id="team1P" type="button" class="btn btn-secondary center-input" value="+">
+		</th>
+		<th><h3 id="ubuzzed"></h3></th>
+		<th>
+		<h3 id="team2">Team 2: 0</h3>
+		<input id="team2M" type="button" style="margin-right: 1rem;" class="btn btn-secondary center-input" value="-">
+		<input id="team2P" type="button" class="btn btn-secondary center-input" value="+">
+		</th>
+	</tr>
+    </table>
     <h3 id="ubuzzed"></h3>
     <ul id="ubuzzed-list" style="margin-top:20px;"></ul>
     <br>
@@ -17,6 +31,30 @@
     <ul id="u-list" style="margin-top:20px;"></ul>
 </div>
 <script>
+    document.getElementById("team1P").addEventListener("click", () => {
+	var score = parseInt(document.getElementById("team1").innerText.split(": ")[1]);
+	score += 1;
+	document.getElementById("team1").innerText = "Team 1: " + score;
+    });
+    
+    document.getElementById("team1M").addEventListener("click", () => {
+	var score = parseInt(document.getElementById("team1").innerText.split(": ")[1]);
+	score -= 1;
+	document.getElementById("team1").innerText = "Team 1: " + score;
+    });
+
+document.getElementById("team2P").addEventListener("click", () => {
+        var score = parseInt(document.getElementById("team2").innerText.split(": ")[1]);
+        score += 1;
+        document.getElementById("team2").innerText = "Team 2: " + score;
+    });
+
+    document.getElementById("team2M").addEventListener("click", () => {
+        var score = parseInt(document.getElementById("team2").innerText.split(": ")[1]);
+        score -= 1;
+        document.getElementById("team2").innerText = "Team 2: " + score;
+    });
+
     function clearbuzzers() {
         buzzedList.textContent = "";
 	firstBuzz = true;
