@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 import random
 from string import ascii_letters
+import time
 
 app = Flask(__name__)
 CORS(app)
@@ -121,3 +122,14 @@ def handle_disconn():
                 emit("adm_deluser", games[i][j][1], to=i + "adm")
                 del games[i][j]
                 return
+
+
+@sock.on("adm_disconn")
+def handle_disconn_adm(data):
+    roomcode, uname = data.split(",")
+    for j in range(len(games[roomcode])):
+        if games[roomcode][j][1] == uname:
+            emit("disconnect", "OK", to=games[roomcode][j][0])
+            del games[roomcode][j]
+            return
+

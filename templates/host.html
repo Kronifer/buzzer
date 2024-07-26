@@ -103,14 +103,23 @@ document.getElementById("team2P").addEventListener("click", () => {
 	e.score = 0;
 	var a = document.createElement("input");
 	var s = document.createElement("input");
+	var d = document.createElement("input");
 	var spacing = document.createElement("span");
 	spacing.innerText = " ";
 	a.type = "button";
 	s.type = "button";
+	d.type = "button";
 	a.className = "btn btn-sm btn-secondary center-input";
 	s.className = "btn btn-sm btn-secondary center-input";
+	d.className = "btn btn-sm btn-danger center-input";
+	d.value = "✕";
 	s.value = "-";
 	a.value = "+";
+	d.addEventListener('click', () => {
+	    document.getElementById(data).remove();
+	    socket.emit("adm_disconn", code+","+data);
+	    clearbuzzers();
+	});
 	a.addEventListener('click', () => {
 	    var elem = document.getElementById(data).innerText.split(": ");
 	    var score = parseInt(elem[1]) + 1;
@@ -119,6 +128,8 @@ document.getElementById("team2P").addEventListener("click", () => {
 	    document.getElementById(data).appendChild(s);
 	    document.getElementById(data).appendChild(spacing);
 	    document.getElementById(data).appendChild(a);
+	    document.getElementById(data).appendChild(spacing.cloneNode(true));
+	    document.getElementById(data).appendChild(d);
 	    sortScores();
 	    socket.emit("adm_scoreup", code+","+data);
 	});
@@ -130,6 +141,8 @@ document.getElementById("team2P").addEventListener("click", () => {
 	    document.getElementById(data).appendChild(s);
 	    document.getElementById(data).appendChild(spacing);
             document.getElementById(data).appendChild(a);
+	    document.getElementById(data).appendChild(spacing.cloneNode(true));
+            document.getElementById(data).appendChild(d);
 	    sortScores();
 	    socket.emit("adm_scoredown", code+","+data);
         });
@@ -139,6 +152,8 @@ document.getElementById("team2P").addEventListener("click", () => {
 	e.appendChild(s);
 	e.appendChild(spacing);
 	e.appendChild(a);
+	e.appendChild(spacing.cloneNode(true));
+	e.appendChild(d);
         ulist.appendChild(e);
     });
 
@@ -154,6 +169,7 @@ document.getElementById("team2P").addEventListener("click", () => {
 	}
         new Audio("./audio/buzz.mp3").play();
         var e = document.createElement("li");
+        
         if(firstBuzz) {
 	    e.style = "color:#00FF00;font-size:36px;font-style:italic;";
 	    firstBuzz = false;

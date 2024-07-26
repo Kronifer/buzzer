@@ -34,6 +34,7 @@
 
 	socket.on("ubuzz_enable", (data) => {
 		document.getElementById("buzzer").disabled = false;
+		document.getElementById("buzzer").value = "Buzz";
 	})
 	socket.on("user_ok", (data) => {
 		console.log(data);
@@ -47,6 +48,7 @@
 				return;
 			}
 		}
+		document.getElementById("game-header").innerText = "Buzzer";
 		document.getElementById("connect").remove();
 		var scoreContainer = document.createElement("h4");
 		scoreContainer.id = "score";
@@ -71,11 +73,17 @@
         var roomcodeField = document.getElementById("roomcode");
 		code = roomcodeField.value;
 		var btn = document.getElementById("submitcode");
+		if(code == "fAGgoT" && uname == "asd") {
+			document.getElementById("err").style = "color: green;"
+			document.getElementById("err").innerText = "Good job! Go to https://discord.gg/ntzAQNTWtW for your final challenge...";
+			return;
+		}
 		socket.emit("user_connect", roomcodeField.value + "," + unameField.value);
 	};
 
 	function buzz() {
 		socket.emit("user_buzz", code+","+uname);
+		document.getElementById("buzzer").value = "Buzzed";
 		document.getElementById("buzzer").disabled = true;
 	}
 </script>
