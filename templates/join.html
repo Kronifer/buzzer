@@ -73,11 +73,6 @@
         var roomcodeField = document.getElementById("roomcode");
 		code = roomcodeField.value;
 		var btn = document.getElementById("submitcode");
-		if(code == "fAGgoT" && uname == "asd") {
-			document.getElementById("err").style = "color: green;"
-			document.getElementById("err").innerText = "Good job! Go to https://discord.gg/ntzAQNTWtW for your final challenge...";
-			return;
-		}
 		socket.emit("user_connect", roomcodeField.value + "," + unameField.value);
 	};
 
